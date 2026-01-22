@@ -1,9 +1,9 @@
-import { Box, Stack, Text, HStack, Button } from "@chakra-ui/react"
+import { Box, Stack, Text, HStack, Button, Flex } from "@chakra-ui/react"
 import { Switch } from "@/components/ui/switch"
 import { Slider } from "@/components/ui/slider"
 import { Tooltip } from "@/components/ui/tooltip"
 import { SearchFilters } from "@/types"
-import { Info } from "lucide-react"
+import { Info, Sliders } from "lucide-react"
 
 interface FilterControlsProps {
     filters: SearchFilters;
@@ -30,16 +30,16 @@ const ALGORITHM_INFO = {
 } as const;
 
 const THRESHOLD_PRESETS = [
-    { label: "Loose", value: 0.3, description: "Shows many results, including distant matches" },
-    { label: "Balanced", value: 0.5, description: "Good balance of relevance and coverage" },
-    { label: "Strict", value: 0.7, description: "Only very close matches" }
+    { label: "Loose", value: 0.3 },
+    { label: "Balanced", value: 0.5 },
+    { label: "Strict", value: 0.7 }
 ];
 
 function getThresholdDescription(threshold: number): string {
-    if (threshold <= 0.35) return "Loose — shows many results including distant matches";
-    if (threshold <= 0.55) return "Balanced — good for most typos";
-    if (threshold <= 0.75) return "Strict — only close matches shown";
-    return "Very strict — exact or near-exact matches only";
+    if (threshold <= 0.35) return "showing many results including distant matches";
+    if (threshold <= 0.55) return "balanced — good for most typos";
+    if (threshold <= 0.75) return "strict — only close matches shown";
+    return "very strict — exact or near-exact matches only";
 }
 
 export function FilterControls({ filters, onChange }: FilterControlsProps) {
@@ -58,41 +58,94 @@ export function FilterControls({ filters, onChange }: FilterControlsProps) {
     };
 
     return (
-        <Stack gap={4} p={4} bg="rgba(10, 20, 35, 0.4)" borderRadius="xl" border="1px solid" borderColor="rgba(255, 255, 255, 0.06)">
+        <Stack
+            gap={5}
+            p={5}
+            bg="rgba(9, 9, 11, 0.6)"
+            borderRadius="xl"
+            border="1px solid"
+            borderColor="rgba(255, 255, 255, 0.04)"
+        >
+            {/* Header */}
+            <HStack gap={2} color="gray.500" fontSize="xs" fontFamily="mono">
+                <Sliders size={12} />
+                <Text letterSpacing="wider">FILTERS</Text>
+            </HStack>
+
+            {/* Threshold Control */}
             <Box>
-                <HStack justify="space-between" mb={2}>
-                    <Text fontSize="sm" fontWeight="medium">
-                        Minimum Similarity: {(filters.minThreshold * 100).toFixed(0)}%
-                    </Text>
-                    <HStack gap={1}>
-                        {THRESHOLD_PRESETS.map((preset) => (
-                            <Button
-                                key={preset.label}
-                                size="xs"
-                                variant={Math.abs(filters.minThreshold - preset.value) < 0.05 ? "solid" : "ghost"}
-                                colorPalette="brand"
-                                onClick={() => setThreshold(preset.value)}
-                            >
-                                {preset.label}
-                            </Button>
-                        ))}
+                <Flex justify="space-between" align="center" mb={3}>
+                    <HStack gap={2}>
+                        <Text fontSize="sm" fontWeight="500" color="gray.300">
+                            Similarity Threshold
+                        </Text>
+                        <Text
+                            fontSize="sm"
+                            fontFamily="mono"
+                            color="brand.400"
+                            fontWeight="600"
+                        >
+                            {(filters.minThreshold * 100).toFixed(0)}%
+                        </Text>
                     </HStack>
-                </HStack>
-                <Slider
-                    value={[filters.minThreshold * 100]}
-                    onValueChange={(e) => onChange({ ...filters, minThreshold: e.value[0] / 100 })}
-                    min={0}
-                    max={100}
-                    step={5}
-                />
-                <Text fontSize="xs" color="gray.500" mt={2} fontStyle="italic" opacity={0.8}>
-                    {getThresholdDescription(filters.minThreshold)}
+                    <HStack gap={1}>
+                        {THRESHOLD_PRESETS.map((preset) => {
+                            const isActive = Math.abs(filters.minThreshold - preset.value) < 0.05;
+                            return (
+                                <Button
+                                    key={preset.label}
+                                    size="xs"
+                                    variant={isActive ? "solid" : "ghost"}
+                                    bg={isActive ? "rgba(245, 185, 66, 0.15)" : "transparent"}
+                                    color={isActive ? "brand.400" : "gray.500"}
+                                    borderColor={isActive ? "rgba(245, 185, 66, 0.3)" : "transparent"}
+                                    border="1px solid"
+                                    onClick={() => setThreshold(preset.value)}
+                                    _hover={{
+                                        bg: isActive ? "rgba(245, 185, 66, 0.2)" : "rgba(255, 255, 255, 0.05)",
+                                        color: isActive ? "brand.300" : "gray.400"
+                                    }}
+                                    fontFamily="mono"
+                                    fontSize="xs"
+                                    px={3}
+                                >
+                                    {preset.label}
+                                </Button>
+                            );
+                        })}
+                    </HStack>
+                </Flex>
+
+                <Box px={1}>
+                    <Slider
+                        value={[filters.minThreshold * 100]}
+                        onValueChange={(e) => onChange({ ...filters, minThreshold: e.value[0] / 100 })}
+                        min={0}
+                        max={100}
+                        step={5}
+                    />
+                </Box>
+
+                <Text
+                    fontSize="xs"
+                    color="gray.600"
+                    mt={3}
+                    fontFamily="mono"
+                    fontStyle="italic"
+                >
+                    {`// ${getThresholdDescription(filters.minThreshold)}`}
                 </Text>
             </Box>
 
-            <Stack gap={2}>
-                <Text fontSize="sm" fontWeight="medium">Algorithms</Text>
-                <HStack wrap="wrap" gap={4}>
+            {/* Divider */}
+            <Box h="1px" bg="rgba(255, 255, 255, 0.04)" />
+
+            {/* Algorithm Toggles */}
+            <Box>
+                <Text fontSize="sm" fontWeight="500" color="gray.300" mb={3}>
+                    Matching Algorithms
+                </Text>
+                <Flex wrap="wrap" gap={4}>
                     {(Object.keys(ALGORITHM_INFO) as Array<keyof typeof ALGORITHM_INFO>).map((key) => (
                         <Tooltip
                             key={key}
@@ -100,19 +153,38 @@ export function FilterControls({ filters, onChange }: FilterControlsProps) {
                             showArrow
                             openDelay={300}
                         >
-                            <HStack gap={1} cursor="help">
+                            <HStack
+                                gap={2}
+                                cursor="help"
+                                p={2}
+                                borderRadius="lg"
+                                bg={filters.enabledAlgorithms[key] ? "rgba(245, 185, 66, 0.05)" : "transparent"}
+                                border="1px solid"
+                                borderColor={filters.enabledAlgorithms[key] ? "rgba(245, 185, 66, 0.1)" : "transparent"}
+                                transition="all 0.2s ease"
+                                _hover={{
+                                    bg: "rgba(255, 255, 255, 0.02)"
+                                }}
+                            >
                                 <Switch
                                     checked={filters.enabledAlgorithms[key]}
                                     onCheckedChange={() => toggleAlgorithm(key)}
+                                    size="sm"
                                 >
-                                    {ALGORITHM_INFO[key].label}
+                                    <Text
+                                        fontFamily="mono"
+                                        fontSize="xs"
+                                        color={filters.enabledAlgorithms[key] ? "gray.200" : "gray.500"}
+                                    >
+                                        {ALGORITHM_INFO[key].label}
+                                    </Text>
                                 </Switch>
-                                <Info size={12} className="text-gray-500" />
+                                <Info size={10} className="text-gray-600" style={{ opacity: 0.5 }} />
                             </HStack>
                         </Tooltip>
                     ))}
-                </HStack>
-            </Stack>
+                </Flex>
+            </Box>
         </Stack>
     )
 }

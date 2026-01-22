@@ -1,46 +1,37 @@
-import { Input, IconButton, HStack, Text, Box } from "@chakra-ui/react"
+import { Input, IconButton, Box } from "@chakra-ui/react"
 import { X, Search } from "lucide-react"
 import { InputGroup } from "@/components/ui/input-group"
 
 interface SearchInputProps {
     value: string;
     onChange: (value: string) => void;
-    isTyping?: boolean;
+    isSearching?: boolean;
 }
 
-export function SearchInput({ value, onChange, isTyping }: SearchInputProps) {
+export function SearchInput({ value, onChange, isSearching }: SearchInputProps) {
     return (
-        <Box w="full">
+        <Box w="full" position="relative">
             <InputGroup
                 w="full"
-                startElement={<Search size={20} className="text-gray-400" />}
+                startOffset="-8px"
+                startElement={
+                    <Box pl={4} color={value ? "brand.400" : "gray.500"} transition="color 0.2s ease">
+                        <Search size={20} strokeWidth={2.5} />
+                    </Box>
+                }
                 endElement={
                     value ? (
-                        <HStack gap={2}>
-                            {isTyping && (
-                                <Box
-                                    w={2}
-                                    h={2}
-                                    borderRadius="full"
-                                    bg="brand.400"
-                                    animation="pulse 1s ease-in-out infinite"
-                                    css={{
-                                        "@keyframes pulse": {
-                                            "0%, 100%": { opacity: 1, boxShadow: "0 0 8px rgba(0, 217, 255, 0.8)" },
-                                            "50%": { opacity: 0.4, boxShadow: "0 0 4px rgba(0, 217, 255, 0.4)" }
-                                        }
-                                    }}
-                                />
-                            )}
-                            <IconButton
-                                aria-label="Clear search (Esc)"
-                                variant="ghost"
-                                size="xs"
-                                onClick={() => onChange('')}
-                            >
-                                <X size={16} />
-                            </IconButton>
-                        </HStack>
+                        <IconButton
+                            aria-label="Clear search (Esc)"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => onChange('')}
+                            color="gray.500"
+                            mr={1}
+                            _hover={{ color: "white", bg: "whiteAlpha.100" }}
+                        >
+                            <X size={18} />
+                        </IconButton>
                     ) : null
                 }
             >
@@ -52,32 +43,49 @@ export function SearchInput({ value, onChange, isTyping }: SearchInputProps) {
                     variant="subtle"
                     fontSize="lg"
                     autoFocus
-                    bg="rgba(10, 20, 35, 0.6)"
+                    autoComplete="off"
+                    spellCheck={false}
+                    bg="rgba(20, 20, 22, 0.6)"
                     border="1px solid"
-                    borderColor="rgba(0, 217, 255, 0.2)"
+                    borderColor="rgba(255, 255, 255, 0.08)"
                     color="white"
                     _placeholder={{ color: "gray.500" }}
                     _focus={{
-                        bg: "rgba(10, 20, 35, 0.8)",
-                        borderColor: "brand.500",
-                        boxShadow: "0 0 20px rgba(0, 217, 255, 0.15), inset 0 0 20px rgba(0, 217, 255, 0.05)"
+                        bg: "rgba(20, 20, 22, 0.9)",
+                        borderColor: "rgba(245, 185, 66, 0.5)",
+                        boxShadow: "0 0 0 3px rgba(245, 185, 66, 0.1), 0 8px 32px rgba(0, 0, 0, 0.3)"
                     }}
                     _hover={{
-                        borderColor: "rgba(0, 217, 255, 0.4)"
+                        borderColor: "rgba(255, 255, 255, 0.15)"
                     }}
                     transition="all 0.2s ease"
+                    borderRadius="2xl"
+                    h={16}
+                    ps="72px"
+                    fontWeight="400"
                 />
             </InputGroup>
-            <HStack justify="flex-end" mt={2} gap={3}>
-                {isTyping && (
-                    <Text fontSize="xs" color="brand.500" fontWeight="medium">
-                        Typing...
-                    </Text>
-                )}
-                <Text fontSize="xs" color="gray.500">
-                    <Text as="span" color="brand.400" fontWeight="medium">{value.length}</Text> characters
-                </Text>
-            </HStack>
+
+            {/* Subtle loading indicator */}
+            {isSearching && (
+                <Box
+                    position="absolute"
+                    bottom={0}
+                    left="50%"
+                    transform="translateX(-50%)"
+                    w="60%"
+                    h="2px"
+                    borderRadius="full"
+                    overflow="hidden"
+                >
+                    <Box
+                        w="30%"
+                        h="full"
+                        bg="linear-gradient(90deg, transparent, var(--brand-amber), transparent)"
+                        className="animate-shimmer"
+                    />
+                </Box>
+            )}
         </Box>
     )
 }

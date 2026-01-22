@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Box, Card, HStack, Text, Badge, IconButton, Flex, VStack, Collapsible } from "@chakra-ui/react"
-import { Copy, ChevronDown, ChevronUp } from "lucide-react"
+import { Copy, ChevronDown, ChevronUp, Check } from "lucide-react"
 import { SearchResult, CharDiff } from "@/types"
 import { toaster } from "@/components/ui/toaster"
 
@@ -12,17 +12,17 @@ interface ResultCardProps {
 }
 
 const ALGORITHM_LABELS = {
-    dice: { label: "Dice", color: "cyan", weight: 0.8 },
-    hamming: { label: "Hamming", color: "gray", weight: 0.6 },
-    phonetic: { label: "Phonetic", color: "purple", weight: 0.7 },
-    swap: { label: "Swap", color: "yellow", weight: 0.95 }
+    dice: { label: "DICE", color: "brand", weight: 0.8 },
+    hamming: { label: "HAMMING", color: "gray", weight: 0.6 },
+    phonetic: { label: "PHONETIC", color: "purple", weight: 0.7 },
+    swap: { label: "SWAP", color: "yellow", weight: 0.95 }
 } as const;
 
 const DIFF_COLORS = {
     match: undefined,
-    insert: "rgba(16, 185, 129, 0.3)",
-    delete: "rgba(239, 68, 68, 0.3)",
-    change: "rgba(251, 191, 36, 0.3)"
+    insert: "rgba(34, 197, 94, 0.25)",
+    delete: "rgba(239, 68, 68, 0.25)",
+    change: "rgba(245, 185, 66, 0.25)"
 } as const;
 
 function HighlightedWord({ charDiffs, word }: { charDiffs?: CharDiff[]; word: string }) {
@@ -38,7 +38,8 @@ function HighlightedWord({ charDiffs, word }: { charDiffs?: CharDiff[]; word: st
                     as="span"
                     bg={DIFF_COLORS[diff.type]}
                     borderRadius={diff.type !== 'match' ? 'sm' : undefined}
-                    px={diff.type !== 'match' ? '1px' : undefined}
+                    px={diff.type !== 'match' ? '2px' : undefined}
+                    fontWeight={diff.type !== 'match' ? '600' : undefined}
                 >
                     {diff.char}
                 </Text>
@@ -49,10 +50,13 @@ function HighlightedWord({ charDiffs, word }: { charDiffs?: CharDiff[]; word: st
 
 export function ResultCard({ result, index }: ResultCardProps) {
     const [isExpanded, setIsExpanded] = useState(false);
+    const [justCopied, setJustCopied] = useState(false);
 
     const handleCopy = async () => {
         try {
             await navigator.clipboard.writeText(result.word);
+            setJustCopied(true);
+            setTimeout(() => setJustCopied(false), 2000);
             toaster.create({
                 title: `Copied "${result.word}"`,
                 type: "success",
@@ -67,77 +71,123 @@ export function ResultCard({ result, index }: ResultCardProps) {
         }
     };
 
-    const getBadgeColor = (type: string) => {
+    const getBadgeStyles = (type: string) => {
         switch (type) {
-            case 'exact': return 'green';
-            case 'swap': return 'yellow';
-            case 'phonetic': return 'purple';
-            case 'dice': return 'cyan';
-            default: return 'gray';
+            case 'exact':
+                return { bg: "rgba(34, 197, 94, 0.15)", color: "green.400", borderColor: "rgba(34, 197, 94, 0.3)" };
+            case 'swap':
+                return { bg: "rgba(250, 204, 21, 0.15)", color: "yellow.400", borderColor: "rgba(250, 204, 21, 0.3)" };
+            case 'phonetic':
+                return { bg: "rgba(168, 85, 247, 0.15)", color: "purple.400", borderColor: "rgba(168, 85, 247, 0.3)" };
+            case 'dice':
+                return { bg: "rgba(245, 185, 66, 0.15)", color: "brand.400", borderColor: "rgba(245, 185, 66, 0.3)" };
+            default:
+                return { bg: "rgba(113, 113, 122, 0.15)", color: "gray.400", borderColor: "rgba(113, 113, 122, 0.3)" };
         }
     };
 
     const getScoreColor = (score: number) => {
-        if (score >= 0.9) return '#10B981';
-        if (score >= 0.7) return '#FBBF24';
-        return '#F87171';
+        if (score >= 0.9) return '#22C55E';
+        if (score >= 0.7) return '#F5B942';
+        return '#EF4444';
     };
+
+    const badgeStyles = getBadgeStyles(result.matchType);
 
     return (
         <Card.Root
             variant="subtle"
             size="sm"
-            bg="rgba(13, 21, 38, 0.6)"
+            bg="rgba(12, 12, 14, 0.6)"
             border="1px solid"
-            borderColor="rgba(255, 255, 255, 0.08)"
-            _hover={{ 
-                transform: "translateY(-2px)", 
-                borderColor: "rgba(0, 217, 255, 0.3)",
-                boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 217, 255, 0.1)"
+            borderColor="rgba(255, 255, 255, 0.06)"
+            _hover={{
+                transform: "translateY(-2px)",
+                borderColor: "rgba(245, 185, 66, 0.2)",
+                boxShadow: "0 12px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(245, 185, 66, 0.05)"
             }}
             transition="all 0.2s ease"
             borderRadius="xl"
             overflow="hidden"
             position="relative"
+            className="card-hover"
         >
-            <Card.Body>
-                <Flex justify="space-between" align="center">
-                    <Box>
-                        <HStack mb={1}>
-                            <Text fontSize="xl" fontWeight="bold" letterSpacing="wide">
+            {/* Top accent line */}
+            <Box
+                position="absolute"
+                top={0}
+                left={0}
+                right={0}
+                h="2px"
+                bg={`linear-gradient(90deg, transparent, ${getScoreColor(result.score)}40, transparent)`}
+            />
+
+            <Card.Body p={5}>
+                <Flex justify="space-between" align="flex-start" gap={4}>
+                    <Box flex={1}>
+                        <HStack mb={2} gap={3}>
+                            <Text
+                                fontSize="xl"
+                                fontWeight="700"
+                                letterSpacing="wide"
+                                fontFamily="mono"
+                            >
                                 <HighlightedWord charDiffs={result.charDiffs} word={result.word} />
                             </Text>
-                            <Badge colorPalette={getBadgeColor(result.matchType)} variant="solid">
+                            <Badge
+                                variant="outline"
+                                size="sm"
+                                px={2}
+                                py={0.5}
+                                borderRadius="md"
+                                fontSize="2xs"
+                                fontWeight="600"
+                                textTransform="uppercase"
+                                letterSpacing="wider"
+                                fontFamily="mono"
+                                {...badgeStyles}
+                                border="1px solid"
+                            >
                                 {result.matchType}
                             </Badge>
                         </HStack>
-                        <HStack gap={4}>
-                            <Text fontSize="xs" color="gray.500">
-                                Score: <Text as="span" color={getScoreColor(result.score)} fontWeight="bold">
+
+                        <HStack gap={4} fontSize="xs" fontFamily="mono">
+                            <HStack gap={1}>
+                                <Text color="gray.600">score:</Text>
+                                <Text color={getScoreColor(result.score)} fontWeight="600">
                                     {(result.score * 100).toFixed(0)}%
                                 </Text>
-                            </Text>
+                            </HStack>
                             {result.matchType === 'phonetic' && (
-                                <Text fontSize="xs" color="purple.300">Sound match</Text>
+                                <HStack gap={1}>
+                                    <Box w={1} h={1} borderRadius="full" bg="purple.400" />
+                                    <Text color="purple.400">sound match</Text>
+                                </HStack>
                             )}
                             {result.matchType === 'swap' && (
-                                <Text fontSize="xs" color="yellow.400">Swap detected</Text>
+                                <HStack gap={1}>
+                                    <Box w={1} h={1} borderRadius="full" bg="yellow.400" />
+                                    <Text color="yellow.400">swap detected</Text>
+                                </HStack>
                             )}
                         </HStack>
                     </Box>
 
-                    <HStack gap={1}>
+                    <HStack gap={2}>
                         {index !== undefined && index < 9 && (
                             <Text
                                 fontSize="xs"
                                 color="gray.600"
-                                bg="whiteAlpha.100"
+                                bg="rgba(28, 28, 31, 0.8)"
                                 px={2}
-                                py={0.5}
+                                py={1}
                                 borderRadius="md"
                                 fontFamily="mono"
+                                border="1px solid"
+                                borderColor="rgba(255, 255, 255, 0.06)"
                             >
-                                ⌘{index + 1}
+                                <Text as="span" fontFamily="system-ui">⌘</Text>{index + 1}
                             </Text>
                         )}
                         <IconButton
@@ -145,8 +195,11 @@ export function ResultCard({ result, index }: ResultCardProps) {
                             variant="ghost"
                             size="sm"
                             onClick={handleCopy}
+                            color={justCopied ? "green.400" : "gray.500"}
+                            _hover={{ color: "brand.400", bg: "rgba(245, 185, 66, 0.1)" }}
+                            transition="all 0.2s ease"
                         >
-                            <Copy size={16} />
+                            {justCopied ? <Check size={16} /> : <Copy size={16} />}
                         </IconButton>
                     </HStack>
                 </Flex>
@@ -155,45 +208,72 @@ export function ResultCard({ result, index }: ResultCardProps) {
                     <Collapsible.Trigger asChild>
                         <HStack
                             gap={1}
-                            mt={2}
+                            mt={3}
                             cursor="pointer"
-                            color="gray.500"
-                            _hover={{ color: "gray.300" }}
+                            color="gray.600"
+                            _hover={{ color: "gray.400" }}
                             fontSize="xs"
+                            fontFamily="mono"
+                            transition="color 0.2s ease"
                         >
-                            <Text>Show details</Text>
-                            {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                            <Text>{isExpanded ? 'hide' : 'show'} details</Text>
+                            {isExpanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
                         </HStack>
                     </Collapsible.Trigger>
                     <Collapsible.Content>
-                        <VStack align="stretch" gap={2} mt={3} pt={3} borderTop="1px solid" borderColor="rgba(255, 255, 255, 0.08)">
+                        <VStack
+                            align="stretch"
+                            gap={3}
+                            mt={4}
+                            pt={4}
+                            borderTop="1px solid"
+                            borderColor="rgba(255, 255, 255, 0.06)"
+                        >
                             {(Object.keys(ALGORITHM_LABELS) as Array<keyof typeof ALGORITHM_LABELS>).map((key) => {
                                 const score = result.algorithmScores[key];
                                 const { label, color, weight } = ALGORITHM_LABELS[key];
 
                                 return (
-                                    <HStack key={key} gap={3} fontSize="xs">
-                                        <Text w="70px" color="gray.400">{label}</Text>
-                                        <Box flex={1} bg="rgba(255, 255, 255, 0.06)" borderRadius="full" h={2} overflow="hidden">
+                                    <HStack key={key} gap={3} fontSize="xs" fontFamily="mono">
+                                        <Text w="80px" color="gray.500" letterSpacing="wider">{label}</Text>
+                                        <Box
+                                            flex={1}
+                                            bg="rgba(255, 255, 255, 0.04)"
+                                            borderRadius="full"
+                                            h="6px"
+                                            overflow="hidden"
+                                            position="relative"
+                                        >
                                             <Box
                                                 h="full"
                                                 bg={`${color}.400`}
                                                 w={`${score * 100}%`}
-                                                transition="width 0.3s"
-                                                boxShadow={`0 0 8px var(--chakra-colors-${color}-400)`}
+                                                transition="width 0.4s ease-out"
+                                                borderRadius="full"
+                                                position="relative"
+                                                _after={{
+                                                    content: '""',
+                                                    position: "absolute",
+                                                    top: 0,
+                                                    left: 0,
+                                                    right: 0,
+                                                    bottom: 0,
+                                                    background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)",
+                                                    borderRadius: "full",
+                                                }}
                                             />
                                         </Box>
-                                        <Text w="40px" textAlign="right" color="gray.500">
+                                        <Text w="35px" textAlign="right" color="gray.500">
                                             {(score * 100).toFixed(0)}%
                                         </Text>
-                                        <Text w="50px" textAlign="right" color="gray.600" fontSize="2xs">
-                                            ×{weight}
+                                        <Text w="40px" textAlign="right" color="gray.700" fontSize="2xs">
+                                            x{weight}
                                         </Text>
                                     </HStack>
                                 );
                             })}
-                            <Text fontSize="2xs" color="gray.600" mt={1}>
-                                Final score uses the highest weighted algorithm result
+                            <Text fontSize="2xs" color="gray.700" mt={1} fontStyle="italic">
+                                {`// final score = max(algorithm_score * weight)`}
                             </Text>
                         </VStack>
                     </Collapsible.Content>
