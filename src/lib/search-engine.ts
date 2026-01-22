@@ -7,12 +7,10 @@ import {
 } from './similarity-algorithms';
 import { SearchResult, SearchOptions, MatchType, CharDiff } from '@/types';
 
-// Compute character-level differences between input and target word
 function computeCharDiffs(input: string, target: string): CharDiff[] {
     const diffs: CharDiff[] = [];
     const maxLen = Math.max(input.length, target.length);
 
-    // Simple diff: compare character by character
     for (let i = 0; i < maxLen; i++) {
         const inputChar = input[i];
         const targetChar = target[i];
@@ -20,14 +18,10 @@ function computeCharDiffs(input: string, target: string): CharDiff[] {
         if (inputChar === targetChar) {
             diffs.push({ char: targetChar, type: 'match' });
         } else if (inputChar === undefined) {
-            // Target has extra character (user missed it)
             diffs.push({ char: targetChar, type: 'insert' });
         } else if (targetChar === undefined) {
-            // Input has extra character (will be removed)
-            // We don't show deleted chars in the target display
             continue;
         } else {
-            // Character differs
             diffs.push({ char: targetChar, type: 'change' });
         }
     }
@@ -41,7 +35,6 @@ export function searchWords(input: string, options: SearchOptions): SearchResult
     const normalizedInput = input.toLowerCase().trim();
     const results: SearchResult[] = [];
 
-    // Weights for different algorithms
     const WEIGHTS = {
         exact: 1.0,
         swap: 0.95,
@@ -51,7 +44,6 @@ export function searchWords(input: string, options: SearchOptions): SearchResult
     };
 
     for (const word of BIP39_WORDLIST) {
-        // Exact match
         if (word === normalizedInput) {
             results.push({
                 word,
@@ -75,7 +67,6 @@ export function searchWords(input: string, options: SearchOptions): SearchResult
             swap: options.enabledAlgorithms.swap ? getSwapSimilarity(normalizedInput, word) : 0
         };
 
-        // Calculate final score based on highest performing algorithm
         let maxScore = 0;
         let matchType: MatchType = 'similar';
 
@@ -94,14 +85,6 @@ export function searchWords(input: string, options: SearchOptions): SearchResult
             if (maxScore === scores.dice * WEIGHTS.dice) matchType = 'dice';
         }
 
-        if (scores.hamming > 0) {
-            // Hamming is usually just a special case of Levenshtein for same-length strings,
-            // but we track it separately if needed.
-            // We don't usually set matchType to 'hamming' specifically unless requested,
-            // but it contributes to the score.
-        }
-
-        // Filter by threshold
         if (maxScore >= options.minThreshold) {
             results.push({
                 word,
@@ -113,7 +96,6 @@ export function searchWords(input: string, options: SearchOptions): SearchResult
         }
     }
 
-    // Sort by score descending
     return results
         .sort((a, b) => b.score - a.score)
         .slice(0, options.maxResults || 20);

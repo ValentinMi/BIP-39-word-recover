@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { searchWords } from '../search-engine';
 import { SearchResult, SearchFilters } from '@/types';
 
-// Debounce helper
 function useDebounce<T>(value: T, delay: number): T {
     const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
@@ -36,7 +35,6 @@ export function useWordSearch() {
 
     const debouncedInput = useDebounce(input, 300);
 
-    // Typing indicator: true when user is typing but debounce hasn't fired yet
     const isTyping = input !== debouncedInput && input.trim().length > 0;
 
     const handleSearch = useCallback(() => {
@@ -48,8 +46,6 @@ export function useWordSearch() {
 
         setIsSearching(true);
 
-        // Use setTimeout to allow UI to update to "searching" state before heavy calculation
-        // although for 2048 words it should be instant.
         setTimeout(() => {
             const searchResults = searchWords(debouncedInput, filters);
             setResults(searchResults);

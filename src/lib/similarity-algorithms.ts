@@ -1,17 +1,9 @@
 import stringSimilarity from 'string-similarity';
 
-/**
- * Calculates Dice coefficient similarity (0-1)
- * Uses Sørensen–Dice coefficient via string-similarity library
- */
 export function getDiceSimilarity(str1: string, str2: string): number {
     return stringSimilarity.compareTwoStrings(str1, str2);
 }
 
-/**
- * Calculates Hamming distance similarity for strings of equal length
- * Returns 0 if lengths differ
- */
 export function getHammingSimilarity(str1: string, str2: string): number {
     if (str1.length !== str2.length) return 0;
 
@@ -25,9 +17,6 @@ export function getHammingSimilarity(str1: string, str2: string): number {
     return 1 - (distance / str1.length);
 }
 
-/**
- * Soundex implementation
- */
 function soundex(word: string): string {
     const a = word.toLowerCase().split('');
     const f = a.shift()!.toUpperCase();
@@ -45,17 +34,13 @@ function soundex(word: string): string {
 
     r = f + a
         .map(v => codes[v])
-        .filter(v => v !== 0 && v !== undefined) // remove vowels and unknown
-        .filter((v, i, arr) => i === 0 || v !== arr[i - 1]) // remove adjacent duplicates
+        .filter(v => v !== 0 && v !== undefined)
+        .filter((v, i, arr) => i === 0 || v !== arr[i - 1])
         .join('');
 
     return (r + '000').slice(0, 4);
 }
 
-/**
- * Simple Consonant Skeleton
- * Removes vowels (except first letter) and compares
- */
 function getConsonantSkeleton(word: string): string {
     const vowels = /[aeiouy]/g;
     const first = word.charAt(0);
@@ -63,33 +48,22 @@ function getConsonantSkeleton(word: string): string {
     return first + rest;
 }
 
-/**
- * Checks if two strings are phonetically similar
- * Returns a score between 0 and 1
- */
 export function getPhoneticSimilarity(str1: string, str2: string): number {
-    // Soundex check
     const s1 = soundex(str1);
     const s2 = soundex(str2);
 
     if (s1 === s2) return 0.9;
 
-    // Consonant skeleton check
     const c1 = getConsonantSkeleton(str1);
     const c2 = getConsonantSkeleton(str2);
 
     if (c1 === c2) return 0.8;
 
-    // Partial soundex match (first 3 chars)
     if (s1.slice(0, 3) === s2.slice(0, 3)) return 0.6;
 
     return 0;
 }
 
-/**
- * Detects if two strings are identical except for one adjacent character swap
- * Example: "teh" vs "the"
- */
 export function getSwapSimilarity(str1: string, str2: string): number {
     if (str1.length !== str2.length) return 0;
 
@@ -100,15 +74,12 @@ export function getSwapSimilarity(str1: string, str2: string): number {
         }
     }
 
-    // Must have exactly 2 differences
     if (diffIndices.length !== 2) return 0;
 
     const [i, j] = diffIndices;
 
-    // Indices must be adjacent
     if (Math.abs(i - j) !== 1) return 0;
 
-    // Characters must be swapped
     if (str1[i] === str2[j] && str1[j] === str2[i]) {
         return 1.0;
     }

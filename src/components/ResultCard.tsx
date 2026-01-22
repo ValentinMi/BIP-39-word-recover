@@ -152,7 +152,6 @@ export function ResultCard({ result, inputWord, index }: ResultCardProps) {
                     </HStack>
                 </Flex>
 
-                {/* Expandable Algorithm Details */}
                 <Collapsible.Root open={isExpanded} onOpenChange={(e) => setIsExpanded(e.open)}>
                     <Collapsible.Trigger asChild>
                         <HStack
