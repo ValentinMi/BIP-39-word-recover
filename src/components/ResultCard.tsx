@@ -8,7 +8,6 @@ import { toaster } from "@/components/ui/toaster"
 
 interface ResultCardProps {
     result: SearchResult;
-    inputWord: string;
     index?: number;
 }
 
@@ -48,7 +47,7 @@ function HighlightedWord({ charDiffs, word }: { charDiffs?: CharDiff[]; word: st
     );
 }
 
-export function ResultCard({ result, inputWord, index }: ResultCardProps) {
+export function ResultCard({ result, index }: ResultCardProps) {
     const [isExpanded, setIsExpanded] = useState(false);
 
     const handleCopy = async () => {
@@ -171,7 +170,6 @@ export function ResultCard({ result, inputWord, index }: ResultCardProps) {
                             {(Object.keys(ALGORITHM_LABELS) as Array<keyof typeof ALGORITHM_LABELS>).map((key) => {
                                 const score = result.algorithmScores[key];
                                 const { label, color, weight } = ALGORITHM_LABELS[key];
-                                const weightedScore = score * weight;
 
                                 return (
                                     <HStack key={key} gap={3} fontSize="xs">

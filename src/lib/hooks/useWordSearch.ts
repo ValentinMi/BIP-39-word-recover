@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { searchWords } from '../search-engine';
 import { SearchResult, SearchFilters } from '@/types';
 
@@ -20,9 +20,6 @@ function useDebounce<T>(value: T, delay: number): T {
 
 export function useWordSearch() {
     const [input, setInput] = useState('');
-    const [isSearching, setIsSearching] = useState(false);
-    const [results, setResults] = useState<SearchResult[]>([]);
-
     const [filters, setFilters] = useState<SearchFilters>({
         minThreshold: 0.4,
         enabledAlgorithms: {
@@ -34,34 +31,20 @@ export function useWordSearch() {
     });
 
     const debouncedInput = useDebounce(input, 300);
-
     const isTyping = input !== debouncedInput && input.trim().length > 0;
 
-    const handleSearch = useCallback(() => {
+    const results = useMemo<SearchResult[]>(() => {
         if (!debouncedInput.trim()) {
-            setResults([]);
-            setIsSearching(false);
-            return;
+            return [];
         }
-
-        setIsSearching(true);
-
-        setTimeout(() => {
-            const searchResults = searchWords(debouncedInput, filters);
-            setResults(searchResults);
-            setIsSearching(false);
-        }, 10);
+        return searchWords(debouncedInput, filters);
     }, [debouncedInput, filters]);
-
-    useEffect(() => {
-        handleSearch();
-    }, [handleSearch]);
 
     return {
         input,
         setInput,
         results,
-        isSearching,
+        isSearching: isTyping,
         isTyping,
         filters,
         setFilters

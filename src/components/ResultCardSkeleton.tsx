@@ -1,4 +1,4 @@
-import { Card, Flex, Box, HStack, Skeleton, SkeletonText } from "@chakra-ui/react"
+import { Card, Flex, Box, HStack, Skeleton } from "@chakra-ui/react"
 
 export function ResultCardSkeleton() {
     return (

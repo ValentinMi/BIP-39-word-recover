@@ -9,7 +9,6 @@ import { ResultsList } from "@/components/ResultsList"
 import { useWordSearch } from "@/lib/hooks/useWordSearch"
 import { toaster } from "@/components/ui/toaster"
 import { Lock, Keyboard } from "lucide-react"
-import { BitmediaAd } from "@/components/BitmediaAd"
 
 export default function Home() {
   const {
@@ -137,7 +136,6 @@ export default function Home() {
               <SearchInput
                 value={input}
                 onChange={setInput}
-                isLoading={isSearching}
                 isTyping={isTyping}
               />
 
@@ -169,13 +167,6 @@ export default function Home() {
               <Text>Copy result</Text>
             </HStack>
           </HStack>
-
-          <Box display={{ base: "none", md: "block" }}>
-            <BitmediaAd size="728x90" />
-          </Box>
-          <Box display={{ base: "block", md: "none" }}>
-            <BitmediaAd size="320x50" />
-          </Box>
         </VStack>
       </Container>
     </Box>

@@ -1,13 +1,8 @@
-import { Fragment } from "react"
 import { SimpleGrid, Text, Box, VStack } from "@chakra-ui/react"
 import { SearchResult } from "@/types"
 import { ResultCard } from "./ResultCard"
 import { ResultCardSkeleton } from "./ResultCardSkeleton"
 import { OnboardingPanel } from "./OnboardingPanel"
-import { InlineAd } from "./BitmediaAd"
-
-// Show inline ad after this many results
-const AD_POSITION = 4
 
 interface ResultsListProps {
     results: SearchResult[];
@@ -67,17 +62,11 @@ export function ResultsList({ results, inputWord, isSearching, onExampleClick }:
             </Text>
             <SimpleGrid columns={{ base: 1, md: 2 }} gap={4}>
                 {results.map((result, index) => (
-                    <Fragment key={result.word}>
-                        <ResultCard
-                            result={result}
-                            inputWord={inputWord}
-                            index={index}
-                        />
-                        {/* Show inline ad after AD_POSITION results */}
-                        {index === AD_POSITION - 1 && results.length > AD_POSITION && (
-                            <InlineAd />
-                        )}
-                    </Fragment>
+                    <ResultCard
+                        key={result.word}
+                        result={result}
+                        index={index}
+                    />
                 ))}
             </SimpleGrid>
         </VStack>

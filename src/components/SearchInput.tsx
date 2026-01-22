@@ -5,11 +5,10 @@ import { InputGroup } from "@/components/ui/input-group"
 interface SearchInputProps {
     value: string;
     onChange: (value: string) => void;
-    isLoading?: boolean;
     isTyping?: boolean;
 }
 
-export function SearchInput({ value, onChange, isLoading, isTyping }: SearchInputProps) {
+export function SearchInput({ value, onChange, isTyping }: SearchInputProps) {
     return (
         <Box w="full">
             <InputGroup
