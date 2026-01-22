@@ -12,6 +12,9 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: "BIP39 Word Recovery Tool",
   description: "Secure, client-side tool to recover misspelled BIP39 seed phrase words.",
+  other: {
+    "bitmedia-site-verification": "391960743a17787c2a75dec0ac2ae62f",
+  },
 };
 
 export default function RootLayout({

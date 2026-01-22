@@ -9,6 +9,7 @@ import { ResultsList } from "@/components/ResultsList"
 import { useWordSearch } from "@/lib/hooks/useWordSearch"
 import { toaster } from "@/components/ui/toaster"
 import { Lock, Keyboard } from "lucide-react"
+import { BitmediaAd } from "@/components/BitmediaAd"
 
 export default function Home() {
   const {
@@ -43,13 +44,11 @@ export default function Home() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Escape to clear search
       if (e.key === 'Escape') {
         setInput('');
         return;
       }
 
-      // Cmd/Ctrl + 1-9 to copy result
       if ((e.metaKey || e.ctrlKey) && e.key >= '1' && e.key <= '9') {
         e.preventDefault();
         const index = parseInt(e.key) - 1;
@@ -80,7 +79,6 @@ export default function Home() {
     >
       <Container maxW="container.md" position="relative">
         <VStack gap={8} align="stretch">
-          {/* Header */}
           <VStack gap={3} textAlign="center">
             <Flex
               justify="center"
@@ -114,10 +112,8 @@ export default function Home() {
             </Text>
           </VStack>
 
-          {/* Security Warning */}
           <SecurityWarning />
 
-          {/* Main Search Area */}
           <Box
             bg="rgba(13, 21, 38, 0.8)"
             p={6}
@@ -152,7 +148,6 @@ export default function Home() {
             </VStack>
           </Box>
 
-          {/* Results */}
           <ResultsList
             results={results}
             inputWord={input}
@@ -160,7 +155,6 @@ export default function Home() {
             onExampleClick={setInput}
           />
 
-          {/* Keyboard shortcuts hint */}
           <HStack justify="center" gap={4} color="gray.500" fontSize="xs">
             <HStack gap={1}>
               <Keyboard size={12} />
@@ -175,6 +169,13 @@ export default function Home() {
               <Text>Copy result</Text>
             </HStack>
           </HStack>
+
+          <Box display={{ base: "none", md: "block" }}>
+            <BitmediaAd size="728x90" />
+          </Box>
+          <Box display={{ base: "block", md: "none" }}>
+            <BitmediaAd size="320x50" />
+          </Box>
         </VStack>
       </Container>
     </Box>
