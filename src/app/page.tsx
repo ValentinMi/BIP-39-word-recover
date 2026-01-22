@@ -1,65 +1,182 @@
-import Image from "next/image";
+"use client"
+
+import { useEffect, useCallback } from "react"
+import { Container, VStack, Heading, Text, Box, Flex, HStack, Kbd } from "@chakra-ui/react"
+import { SearchInput } from "@/components/SearchInput"
+import { SecurityWarning } from "@/components/SecurityWarning"
+import { FilterControls } from "@/components/FilterControls"
+import { ResultsList } from "@/components/ResultsList"
+import { useWordSearch } from "@/lib/hooks/useWordSearch"
+import { toaster } from "@/components/ui/toaster"
+import { Lock, Keyboard } from "lucide-react"
 
 export default function Home() {
+  const {
+    input,
+    setInput,
+    results,
+    isSearching,
+    isTyping,
+    filters,
+    setFilters
+  } = useWordSearch();
+
+  const copyResult = useCallback(async (index: number) => {
+    if (index >= 0 && index < results.length) {
+      const word = results[index].word;
+      try {
+        await navigator.clipboard.writeText(word);
+        toaster.create({
+          title: `Copied "${word}"`,
+          type: "success",
+          duration: 2000,
+        });
+      } catch {
+        toaster.create({
+          title: "Failed to copy",
+          type: "error",
+          duration: 2000,
+        });
+      }
+    }
+  }, [results]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Escape to clear search
+      if (e.key === 'Escape') {
+        setInput('');
+        return;
+      }
+
+      // Cmd/Ctrl + 1-9 to copy result
+      if ((e.metaKey || e.ctrlKey) && e.key >= '1' && e.key <= '9') {
+        e.preventDefault();
+        const index = parseInt(e.key) - 1;
+        copyResult(index);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [setInput, copyResult]);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <Box 
+      minH="100vh" 
+      bg="linear-gradient(180deg, #0a0e17 0%, #0d1526 50%, #0a1628 100%)"
+      py={10}
+      position="relative"
+      _before={{
+        content: '""',
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: "radial-gradient(ellipse at 50% 0%, rgba(0, 217, 255, 0.08) 0%, transparent 50%)",
+        pointerEvents: "none"
+      }}
+    >
+      <Container maxW="container.md" position="relative">
+        <VStack gap={8} align="stretch">
+          {/* Header */}
+          <VStack gap={3} textAlign="center">
+            <Flex
+              justify="center"
+              align="center"
+              w={16}
+              h={16}
+              bg="linear-gradient(135deg, #00D9FF 0%, #0097A7 100%)"
+              borderRadius="2xl"
+              color="white"
+              mb={2}
+              boxShadow="0 0 40px rgba(0, 217, 255, 0.4), 0 0 80px rgba(0, 217, 255, 0.2)"
+              border="1px solid"
+              borderColor="whiteAlpha.200"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              <Lock size={28} />
+            </Flex>
+            <Heading 
+              size="3xl" 
+              fontWeight="bold" 
+              letterSpacing="tight"
+              bgGradient="to-r"
+              gradientFrom="white"
+              gradientTo="gray.400"
+              bgClip="text"
             >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+              BIP39 Word Recover
+            </Heading>
+            <Text fontSize="lg" color="gray.400" maxW="lg">
+              Find the correct seed phrase word from a typo or misspelling.
+              <Text as="span" color="brand.400" fontWeight="medium"> Secure, client-side only.</Text>
+            </Text>
+          </VStack>
+
+          {/* Security Warning */}
+          <SecurityWarning />
+
+          {/* Main Search Area */}
+          <Box
+            bg="rgba(13, 21, 38, 0.8)"
+            p={6}
+            borderRadius="2xl"
+            border="1px solid"
+            borderColor="rgba(0, 217, 255, 0.15)"
+            shadow="0 4px 30px rgba(0, 0, 0, 0.3)"
+            backdropFilter="blur(20px)"
+            position="relative"
+            _before={{
+              content: '""',
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              height: "1px",
+              background: "linear-gradient(90deg, transparent, rgba(0, 217, 255, 0.5), transparent)",
+            }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+            <VStack gap={6}>
+              <SearchInput
+                value={input}
+                onChange={setInput}
+                isLoading={isSearching}
+                isTyping={isTyping}
+              />
+
+              <FilterControls
+                filters={filters}
+                onChange={setFilters}
+              />
+            </VStack>
+          </Box>
+
+          {/* Results */}
+          <ResultsList
+            results={results}
+            inputWord={input}
+            isSearching={isSearching}
+            onExampleClick={setInput}
+          />
+
+          {/* Keyboard shortcuts hint */}
+          <HStack justify="center" gap={4} color="gray.500" fontSize="xs">
+            <HStack gap={1}>
+              <Keyboard size={12} />
+              <Text>Shortcuts:</Text>
+            </HStack>
+            <HStack gap={1}>
+              <Kbd size="sm" bg="whiteAlpha.100" borderColor="whiteAlpha.200">Esc</Kbd>
+              <Text>Clear</Text>
+            </HStack>
+            <HStack gap={1}>
+              <Kbd size="sm" bg="whiteAlpha.100" borderColor="whiteAlpha.200">⌘1-9</Kbd>
+              <Text>Copy result</Text>
+            </HStack>
+          </HStack>
+        </VStack>
+      </Container>
+    </Box>
+  )
 }
