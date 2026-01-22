@@ -45,9 +45,6 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
-  other: {
-    "bitmedia-site-verification": "391960743a17787c2a75dec0ac2ae62f",
-  },
 };
 
 export default function RootLayout({
