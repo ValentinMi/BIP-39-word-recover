@@ -1,10 +1,22 @@
 <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#00D9FF"/>
-      <stop offset="100%" stop-color="#0097A7"/>
+      <stop offset="0%" stop-color="#1C1C1F"/>
+      <stop offset="100%" stop-color="#09090B"/>
+    </linearGradient>
+    <linearGradient id="shield" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5B942"/>
+      <stop offset="100%" stop-color="#E5A320"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5B942" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#E5A320" stop-opacity="0.1"/>
     </linearGradient>
   </defs>
-  <rect width="32" height="32" rx="6" fill="url(#bg)"/>
-  <path d="M16 8C13.2386 8 11 10.2386 11 13V15H10C9.44772 15 9 15.4477 9 16V23C9 23.5523 9.44772 24 10 24H22C22.5523 24 23 23.5523 23 23V16C23 15.4477 22.5523 15 22 15H21V13C21 10.2386 18.7614 8 16 8ZM13 13C13 11.3431 14.3431 10 16 10C17.6569 10 19 11.3431 19 13V15H13V13Z" fill="white"/>
+  <rect width="32" height="32" rx="8" fill="url(#bg)"/>
+  <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" stroke="url(#shield)" stroke-opacity="0.4"/>
+  <!-- Shield icon -->
+  <path d="M16 6L8 10V15C8 20.52 11.44 25.74 16 27C20.56 25.74 24 20.52 24 15V10L16 6Z" fill="url(#glow)"/>
+  <path d="M16 7.5L9.5 11V15C9.5 19.83 12.48 24.41 16 25.5C19.52 24.41 22.5 19.83 22.5 15V11L16 7.5Z" stroke="url(#shield)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <path d="M12 15L14.5 17.5L20 12" stroke="url(#shield)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

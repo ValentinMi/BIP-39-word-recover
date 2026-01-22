@@ -1,12 +1,25 @@
 import type { Metadata } from "next";
-import { Outfit } from "next/font/google";
+import { Syne, JetBrains_Mono, DM_Sans } from "next/font/google";
 import { Provider } from "@/components/ui/provider";
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 
-const outfit = Outfit({
+const syne = Syne({
   subsets: ["latin"],
-  variable: "--font-outfit",
+  variable: "--font-syne",
+  weight: ["400", "500", "600", "700", "800"],
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  weight: ["400", "500", "600", "700"],
+});
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-body",
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -54,7 +67,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${outfit.variable} antialiased`}>
+      <body className={`${syne.variable} ${jetbrainsMono.variable} ${dmSans.variable} antialiased`}>
         <Provider>
           {children}
           <Toaster />
