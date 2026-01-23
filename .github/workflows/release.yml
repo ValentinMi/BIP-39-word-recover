@@ -1,0 +1,111 @@
+name: Release
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+jobs:
+  release:
+    # Only run when PR is merged (not just closed) and comes from develop
+    if: github.event.pull_request.merged == true && github.event.pull_request.head.ref == 'develop'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get latest tag
+        id: get_tag
+        run: |
+          # Get the latest tag, normalize v1 to v1.0.0 format
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+
+          # Normalize v1 or v1.0 to v1.0.0 format
+          if [[ "$LATEST_TAG" =~ ^v([0-9]+)$ ]]; then
+            LATEST_TAG="v${BASH_REMATCH[1]}.0.0"
+          elif [[ "$LATEST_TAG" =~ ^v([0-9]+)\.([0-9]+)$ ]]; then
+            LATEST_TAG="v${BASH_REMATCH[1]}.${BASH_REMATCH[2]}.0"
+          fi
+
+          echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+          echo "Latest tag: $LATEST_TAG"
+
+      - name: Determine version bump
+        id: bump
+        run: |
+          # Get commits since last tag
+          COMMITS=$(git log $(git describe --tags --abbrev=0 2>/dev/null || echo "")..HEAD --pretty=format:"%s" 2>/dev/null || git log --pretty=format:"%s")
+
+          # Determine bump type based on conventional commits
+          BUMP="patch"
+
+          if echo "$COMMITS" | grep -qiE "^feat(\(.+\))?!:|^fix(\(.+\))?!:|^refactor(\(.+\))?!:|BREAKING CHANGE"; then
+            BUMP="major"
+          elif echo "$COMMITS" | grep -qiE "^feat(\(.+\))?:"; then
+            BUMP="minor"
+          fi
+
+          echo "bump=$BUMP" >> $GITHUB_OUTPUT
+          echo "Version bump: $BUMP"
+
+      - name: Calculate new version
+        id: version
+        run: |
+          LATEST="${{ steps.get_tag.outputs.latest_tag }}"
+          BUMP="${{ steps.bump.outputs.bump }}"
+
+          # Remove 'v' prefix and split into parts
+          VERSION=${LATEST#v}
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+
+          case $BUMP in
+            major)
+              MAJOR=$((MAJOR + 1))
+              MINOR=0
+              PATCH=0
+              ;;
+            minor)
+              MINOR=$((MINOR + 1))
+              PATCH=0
+              ;;
+            patch)
+              PATCH=$((PATCH + 1))
+              ;;
+          esac
+
+          NEW_TAG="v${MAJOR}.${MINOR}.${PATCH}"
+          echo "new_tag=$NEW_TAG" >> $GITHUB_OUTPUT
+          echo "New version: $NEW_TAG"
+
+      - name: Generate release notes
+        id: notes
+        run: |
+          # Get commits since last tag for release notes
+          PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+
+          if [ -n "$PREV_TAG" ]; then
+            COMMITS=$(git log ${PREV_TAG}..HEAD --pretty=format:"- %s" --no-merges | head -50)
+          else
+            COMMITS=$(git log --pretty=format:"- %s" --no-merges | head -50)
+          fi
+
+          # Write to file to preserve newlines
+          echo "$COMMITS" > /tmp/commits.txt
+
+          echo "Generated release notes"
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.new_tag }}
+          name: Release ${{ steps.version.outputs.new_tag }}
+          body_path: /tmp/commits.txt
+          generate_release_notes: true
+          make_latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
