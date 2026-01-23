@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useCallback } from "react"
+import Link from "next/link"
 import { Container, VStack, Heading, Text, Box, Flex, HStack, Kbd } from "@chakra-ui/react"
 import { SearchInput } from "@/components/SearchInput"
 import { SecurityWarning } from "@/components/SecurityWarning"
@@ -8,7 +9,7 @@ import { FilterControls } from "@/components/FilterControls"
 import { ResultsList } from "@/components/ResultsList"
 import { useWordSearch } from "@/lib/hooks/useWordSearch"
 import { toaster } from "@/components/ui/toaster"
-import { Shield, Terminal, Keyboard } from "lucide-react"
+import { Shield, Terminal, Keyboard, BookOpen } from "lucide-react"
 
 export default function Home() {
   const {
@@ -240,45 +241,73 @@ export default function Home() {
           </Box>
 
           {/* Footer with shortcuts */}
-          <HStack
-            justify="center"
-            gap={6}
-            color="gray.600"
-            fontSize="xs"
-            fontFamily="mono"
+          <VStack
+            gap={4}
             py={4}
             borderTop="1px solid"
             borderColor="rgba(255, 255, 255, 0.04)"
           >
-            <HStack gap={2}>
-              <Keyboard size={12} />
-              <Text color="gray.500">shortcuts:</Text>
+            <HStack
+              justify="center"
+              gap={6}
+              color="gray.600"
+              fontSize="xs"
+              fontFamily="mono"
+            >
+              <HStack gap={2}>
+                <Keyboard size={12} />
+                <Text color="gray.500">shortcuts:</Text>
+              </HStack>
+              <HStack gap={1}>
+                <Kbd
+                  size="sm"
+                  bg="rgba(28, 28, 31, 0.8)"
+                  borderColor="rgba(255, 255, 255, 0.1)"
+                  color="gray.400"
+                  fontFamily="mono"
+                >
+                  Esc
+                </Kbd>
+                <Text>clear</Text>
+              </HStack>
+              <HStack gap={1}>
+                <Kbd
+                  size="sm"
+                  bg="rgba(28, 28, 31, 0.8)"
+                  borderColor="rgba(255, 255, 255, 0.1)"
+                  color="gray.400"
+                  fontFamily="mono"
+                >
+                  <Text as="span" fontFamily="system-ui">⌘</Text>1-9
+                </Kbd>
+                <Text>copy</Text>
+              </HStack>
             </HStack>
-            <HStack gap={1}>
-              <Kbd
-                size="sm"
-                bg="rgba(28, 28, 31, 0.8)"
-                borderColor="rgba(255, 255, 255, 0.1)"
-                color="gray.400"
-                fontFamily="mono"
+
+            <Link href="/faq">
+              <HStack
+                gap={2}
+                bg="rgba(245, 185, 66, 0.08)"
+                border="1px solid"
+                borderColor="rgba(245, 185, 66, 0.2)"
+                color="brand.400"
+                fontSize="sm"
+                fontWeight="500"
+                px={5}
+                py={2.5}
+                borderRadius="full"
+                _hover={{
+                  bg: "rgba(245, 185, 66, 0.15)",
+                  borderColor: "rgba(245, 185, 66, 0.4)",
+                  transform: "translateY(-1px)",
+                }}
+                transition="all 0.2s ease"
               >
-                Esc
-              </Kbd>
-              <Text>clear</Text>
-            </HStack>
-            <HStack gap={1}>
-              <Kbd
-                size="sm"
-                bg="rgba(28, 28, 31, 0.8)"
-                borderColor="rgba(255, 255, 255, 0.1)"
-                color="gray.400"
-                fontFamily="mono"
-              >
-                <Text as="span" fontFamily="system-ui">⌘</Text>1-9
-              </Kbd>
-              <Text>copy</Text>
-            </HStack>
-          </HStack>
+                <BookOpen size={16} />
+                <Text>Learn about BIP39 & seed phrases</Text>
+              </HStack>
+            </Link>
+          </VStack>
         </VStack>
       </Container>
     </Box>
