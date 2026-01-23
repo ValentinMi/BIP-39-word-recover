@@ -329,6 +329,16 @@ export default function Home() {
                 <Text>Learn about BIP39 & seed phrases</Text>
               </HStack>
             </Link>
+
+            {/* Copyright */}
+            <Text
+              fontSize="xs"
+              color="gray.600"
+              textAlign="center"
+              pt={2}
+            >
+              © {new Date().getFullYear()} WebXFactory. All rights reserved.
+            </Text>
           </VStack>
         </VStack>
       </Container>
