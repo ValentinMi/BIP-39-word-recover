@@ -9,7 +9,7 @@ import { FilterControls } from "@/components/FilterControls"
 import { ResultsList } from "@/components/ResultsList"
 import { useWordSearch } from "@/lib/hooks/useWordSearch"
 import { toaster } from "@/components/ui/toaster"
-import { Shield, Terminal, Keyboard, BookOpen } from "lucide-react"
+import { Terminal, Keyboard, BookOpen } from "lucide-react"
 
 export default function Home() {
   const {
@@ -138,7 +138,19 @@ export default function Home() {
                 filter: "blur(10px)",
               }}
             >
-              <Shield size={36} strokeWidth={1.5} />
+              <svg
+                width="36"
+                height="36"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 2L4 6v5c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V6l-8-4z" />
+                <path d="M9 12l2 2 4-4" />
+              </svg>
             </Flex>
 
             {/* Terminal-style label */}

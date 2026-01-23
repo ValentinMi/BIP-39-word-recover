@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Box, Container, HStack, Text, Flex } from "@chakra-ui/react"
-import { Shield, BookOpen, Github } from "lucide-react"
+import { BookOpen, Github } from "lucide-react"
 
 export function Navbar() {
   const pathname = usePathname()
@@ -42,7 +42,19 @@ export function Navbar() {
                 justify="center"
                 color="brand.400"
               >
-                <Shield size={16} strokeWidth={2} />
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M12 2L4 6v5c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V6l-8-4z" />
+                  <path d="M9 12l2 2 4-4" />
+                </svg>
               </Flex>
               <Text
                 fontFamily="heading"
