@@ -154,20 +154,26 @@ export default function Home() {
             </Flex>
 
             {/* Terminal-style label */}
-            <HStack
-              gap={2}
+            <Flex
+              wrap="wrap"
+              justify="center"
+              gap={{ base: 1.5, sm: 2 }}
               fontSize="xs"
               color="gray.500"
               fontFamily="mono"
               className="animate-fade-in delay-1"
             >
-              <Terminal size={12} />
-              <Text>bip39-recover v1.0</Text>
-              <Box w="1px" h="12px" bg="gray.700" />
-              <Text color="green.500">secure</Text>
-              <Box w="1px" h="12px" bg="gray.700" />
-              <Text>client-side</Text>
-            </HStack>
+              <HStack gap={2}>
+                <Terminal size={12} />
+                <Text>bip39-recover v1.0</Text>
+              </HStack>
+              <HStack gap={2}>
+                <Box w="1px" h="12px" bg="gray.700" display={{ base: "none", sm: "block" }} />
+                <Text color="green.500">secure</Text>
+                <Box w="1px" h="12px" bg="gray.700" />
+                <Text>client-side</Text>
+              </HStack>
+            </Flex>
 
             {/* Main heading */}
             <Heading
@@ -259,7 +265,9 @@ export default function Home() {
             borderTop="1px solid"
             borderColor="rgba(255, 255, 255, 0.04)"
           >
+            {/* Keyboard shortcuts - hidden on mobile */}
             <HStack
+              display={{ base: "none", md: "flex" }}
               justify="center"
               gap={6}
               color="gray.600"
@@ -296,7 +304,7 @@ export default function Home() {
               </HStack>
             </HStack>
 
-            <Link href="/faq">
+            <Link href="/faq" style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
               <HStack
                 gap={2}
                 bg="rgba(245, 185, 66, 0.08)"
@@ -308,6 +316,8 @@ export default function Home() {
                 px={5}
                 py={2.5}
                 borderRadius="full"
+                w={{ base: "full", sm: "auto" }}
+                justify="center"
                 _hover={{
                   bg: "rgba(245, 185, 66, 0.15)",
                   borderColor: "rgba(245, 185, 66, 0.4)",

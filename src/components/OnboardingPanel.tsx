@@ -95,28 +95,37 @@ export function OnboardingPanel({ onExampleClick }: OnboardingPanelProps) {
                             }}
                             transition="all 0.2s ease"
                             justifyContent="space-between"
-                            px={5}
-                            h={14}
+                            px={{ base: 4, sm: 5 }}
+                            h={{ base: "auto", sm: 14 }}
+                            py={{ base: 3, sm: 0 }}
                             borderRadius="xl"
                         >
-                            <HStack gap={3}>
-                                <Text fontFamily="mono" fontWeight="600" color="brand.400">
-                                    {typo}
-                                </Text>
-                                <ArrowRight size={14} style={{ color: '#71717A' }} />
-                                <Text fontFamily="mono" color="green.400">
-                                    {correct}
-                                </Text>
-                            </HStack>
-                            <Text
-                                fontSize="xs"
-                                fontFamily="mono"
-                                color="gray.600"
-                                textTransform="uppercase"
-                                letterSpacing="wider"
+                            <Flex
+                                direction={{ base: "column", sm: "row" }}
+                                align={{ base: "flex-start", sm: "center" }}
+                                gap={{ base: 1, sm: 3 }}
+                                w="full"
+                                justify={{ base: "flex-start", sm: "space-between" }}
                             >
-                                {hint}
-                            </Text>
+                                <HStack gap={{ base: 2, sm: 3 }}>
+                                    <Text fontFamily="mono" fontWeight="600" color="brand.400" fontSize={{ base: "sm", sm: "md" }}>
+                                        {typo}
+                                    </Text>
+                                    <ArrowRight size={14} style={{ color: '#71717A' }} />
+                                    <Text fontFamily="mono" color="green.400" fontSize={{ base: "sm", sm: "md" }}>
+                                        {correct}
+                                    </Text>
+                                </HStack>
+                                <Text
+                                    fontSize="xs"
+                                    fontFamily="mono"
+                                    color="gray.600"
+                                    textTransform="uppercase"
+                                    letterSpacing="wider"
+                                >
+                                    {hint}
+                                </Text>
+                            </Flex>
                         </Button>
                     ))}
                 </VStack>

@@ -74,7 +74,13 @@ export function FilterControls({ filters, onChange }: FilterControlsProps) {
 
             {/* Threshold Control */}
             <Box>
-                <Flex justify="space-between" align="center" mb={3}>
+                <Flex
+                    direction={{ base: "column", sm: "row" }}
+                    justify="space-between"
+                    align={{ base: "stretch", sm: "center" }}
+                    gap={{ base: 3, sm: 0 }}
+                    mb={3}
+                >
                     <HStack gap={2}>
                         <Text fontSize="sm" fontWeight="500" color="gray.300">
                             Similarity Threshold
@@ -88,7 +94,7 @@ export function FilterControls({ filters, onChange }: FilterControlsProps) {
                             {(filters.minThreshold * 100).toFixed(0)}%
                         </Text>
                     </HStack>
-                    <HStack gap={1}>
+                    <HStack gap={1} justify={{ base: "flex-start", sm: "flex-end" }}>
                         {THRESHOLD_PRESETS.map((preset) => {
                             const isActive = Math.abs(filters.minThreshold - preset.value) < 0.05;
                             return (
@@ -108,6 +114,7 @@ export function FilterControls({ filters, onChange }: FilterControlsProps) {
                                     fontFamily="mono"
                                     fontSize="xs"
                                     px={3}
+                                    flex={{ base: 1, sm: "initial" }}
                                 >
                                     {preset.label}
                                 </Button>
@@ -145,7 +152,7 @@ export function FilterControls({ filters, onChange }: FilterControlsProps) {
                 <Text fontSize="sm" fontWeight="500" color="gray.300" mb={3}>
                     Matching Algorithms
                 </Text>
-                <Flex wrap="wrap" gap={4}>
+                <Flex wrap="wrap" gap={{ base: 2, sm: 4 }}>
                     {(Object.keys(ALGORITHM_INFO) as Array<keyof typeof ALGORITHM_INFO>).map((key) => (
                         <Tooltip
                             key={key}
@@ -165,6 +172,8 @@ export function FilterControls({ filters, onChange }: FilterControlsProps) {
                                 _hover={{
                                     bg: "rgba(255, 255, 255, 0.02)"
                                 }}
+                                flex={{ base: "1 1 calc(50% - 4px)", sm: "0 0 auto" }}
+                                minW={{ base: "0", sm: "auto" }}
                             >
                                 <Switch
                                     checked={filters.enabledAlgorithms[key]}
@@ -179,7 +188,7 @@ export function FilterControls({ filters, onChange }: FilterControlsProps) {
                                         {ALGORITHM_INFO[key].label}
                                     </Text>
                                 </Switch>
-                                <Info size={10} className="text-gray-600" style={{ opacity: 0.5 }} />
+                                <Info size={10} className="text-gray-600" style={{ opacity: 0.5, flexShrink: 0 }} />
                             </HStack>
                         </Tooltip>
                     ))}

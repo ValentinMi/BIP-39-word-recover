@@ -122,12 +122,17 @@ export function ResultCard({ result, index }: ResultCardProps) {
                 bg={`linear-gradient(90deg, transparent, ${getScoreColor(result.score)}40, transparent)`}
             />
 
-            <Card.Body p={5}>
-                <Flex justify="space-between" align="flex-start" gap={4}>
-                    <Box flex={1}>
-                        <HStack mb={2} gap={3}>
+            <Card.Body p={{ base: 4, sm: 5 }}>
+                <Flex justify="space-between" align="flex-start" gap={{ base: 2, sm: 4 }}>
+                    <Box flex={1} minW={0}>
+                        <Flex
+                            direction={{ base: "column", sm: "row" }}
+                            align={{ base: "flex-start", sm: "center" }}
+                            gap={{ base: 1.5, sm: 3 }}
+                            mb={2}
+                        >
                             <Text
-                                fontSize="xl"
+                                fontSize={{ base: "lg", sm: "xl" }}
                                 fontWeight="700"
                                 letterSpacing="wide"
                                 fontFamily="mono"
@@ -150,9 +155,9 @@ export function ResultCard({ result, index }: ResultCardProps) {
                             >
                                 {result.matchType}
                             </Badge>
-                        </HStack>
+                        </Flex>
 
-                        <HStack gap={4} fontSize="xs" fontFamily="mono">
+                        <Flex wrap="wrap" gap={{ base: 2, sm: 4 }} fontSize="xs" fontFamily="mono">
                             <HStack gap={1}>
                                 <Text color="gray.600">score:</Text>
                                 <Text color={getScoreColor(result.score)} fontWeight="600">
@@ -171,12 +176,13 @@ export function ResultCard({ result, index }: ResultCardProps) {
                                     <Text color="yellow.400">swap detected</Text>
                                 </HStack>
                             )}
-                        </HStack>
+                        </Flex>
                     </Box>
 
-                    <HStack gap={2}>
+                    <HStack gap={2} flexShrink={0}>
                         {index !== undefined && index < 9 && (
                             <Text
+                                display={{ base: "none", md: "block" }}
                                 fontSize="xs"
                                 color="gray.600"
                                 bg="rgba(28, 28, 31, 0.8)"
@@ -234,8 +240,8 @@ export function ResultCard({ result, index }: ResultCardProps) {
                                 const { label, color, weight } = ALGORITHM_LABELS[key];
 
                                 return (
-                                    <HStack key={key} gap={3} fontSize="xs" fontFamily="mono">
-                                        <Text w="80px" color="gray.500" letterSpacing="wider">{label}</Text>
+                                    <HStack key={key} gap={{ base: 2, sm: 3 }} fontSize="xs" fontFamily="mono">
+                                        <Text w={{ base: "60px", sm: "80px" }} color="gray.500" letterSpacing="wider" fontSize={{ base: "2xs", sm: "xs" }}>{label}</Text>
                                         <Box
                                             flex={1}
                                             bg="rgba(255, 255, 255, 0.04)"
@@ -243,6 +249,7 @@ export function ResultCard({ result, index }: ResultCardProps) {
                                             h="6px"
                                             overflow="hidden"
                                             position="relative"
+                                            minW="60px"
                                         >
                                             <Box
                                                 h="full"
@@ -263,16 +270,16 @@ export function ResultCard({ result, index }: ResultCardProps) {
                                                 }}
                                             />
                                         </Box>
-                                        <Text w="35px" textAlign="right" color="gray.500">
+                                        <Text w={{ base: "28px", sm: "35px" }} textAlign="right" color="gray.500" fontSize={{ base: "2xs", sm: "xs" }}>
                                             {(score * 100).toFixed(0)}%
                                         </Text>
-                                        <Text w="40px" textAlign="right" color="gray.700" fontSize="2xs">
+                                        <Text display={{ base: "none", sm: "block" }} w="40px" textAlign="right" color="gray.700" fontSize="2xs">
                                             x{weight}
                                         </Text>
                                     </HStack>
                                 );
                             })}
-                            <Text fontSize="2xs" color="gray.700" mt={1} fontStyle="italic">
+                            <Text fontSize="2xs" color="gray.700" mt={1} fontStyle="italic" display={{ base: "none", sm: "block" }}>
                                 {`// final score = max(algorithm_score * weight)`}
                             </Text>
                         </VStack>

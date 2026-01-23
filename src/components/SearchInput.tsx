@@ -15,7 +15,7 @@ export function SearchInput({ value, onChange, isSearching }: SearchInputProps) 
                 w="full"
                 startOffset="-8px"
                 startElement={
-                    <Box pl={4} color={value ? "brand.400" : "gray.500"} transition="color 0.2s ease">
+                    <Box pl={{ base: 3, sm: 4 }} color={value ? "brand.400" : "gray.500"} transition="color 0.2s ease">
                         <Search size={20} strokeWidth={2.5} />
                     </Box>
                 }
@@ -41,7 +41,7 @@ export function SearchInput({ value, onChange, isSearching }: SearchInputProps) 
                     onChange={(e) => onChange(e.target.value)}
                     size="lg"
                     variant="subtle"
-                    fontSize="lg"
+                    fontSize={{ base: "md", sm: "lg" }}
                     autoFocus
                     autoComplete="off"
                     spellCheck={false}
@@ -60,8 +60,8 @@ export function SearchInput({ value, onChange, isSearching }: SearchInputProps) 
                     }}
                     transition="all 0.2s ease"
                     borderRadius="2xl"
-                    h={16}
-                    ps="72px"
+                    h={{ base: 14, sm: 16 }}
+                    ps={{ base: "56px", sm: "72px" }}
                     fontWeight="400"
                 />
             </InputGroup>
