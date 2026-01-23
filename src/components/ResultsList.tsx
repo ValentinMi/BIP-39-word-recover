@@ -1,4 +1,4 @@
-import { SimpleGrid, Text, Box, VStack, HStack } from "@chakra-ui/react"
+import { SimpleGrid, Text, Box, VStack, HStack, Flex } from "@chakra-ui/react"
 import { SearchResult } from "@/types"
 import { ResultCard } from "./ResultCard"
 import { ResultCardSkeleton } from "./ResultCardSkeleton"
@@ -107,7 +107,13 @@ export function ResultsList({ results, inputWord, isSearching, onExampleClick }:
 
     return (
         <VStack align="stretch" gap={4}>
-            <HStack justify="space-between" px={1}>
+            <Flex
+                direction={{ base: "column", sm: "row" }}
+                justify="space-between"
+                align={{ base: "flex-start", sm: "center" }}
+                gap={{ base: 1, sm: 0 }}
+                px={1}
+            >
                 <HStack gap={2} fontSize="xs" fontFamily="mono" color="gray.500">
                     <Box w={2} h={2} borderRadius="full" bg="green.500" />
                     <Text>
@@ -121,7 +127,7 @@ export function ResultsList({ results, inputWord, isSearching, onExampleClick }:
                 <Text fontSize="xs" fontFamily="mono" color="gray.600">
                     query: &quot;{inputWord}&quot;
                 </Text>
-            </HStack>
+            </Flex>
             <SimpleGrid columns={{ base: 1, md: 2 }} gap={4}>
                 {results.map((result, index) => (
                     <Box

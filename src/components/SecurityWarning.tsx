@@ -8,7 +8,7 @@ export function SecurityWarning() {
             border="1px solid"
             borderColor="rgba(245, 185, 66, 0.15)"
             borderRadius="xl"
-            p={5}
+            p={{ base: 4, sm: 5 }}
             position="relative"
             overflow="hidden"
         >
@@ -60,7 +60,13 @@ export function SecurityWarning() {
                         </Text>.
                     </Text>
 
-                    <HStack gap={4} fontSize="xs" fontFamily="mono" color="gray.500">
+                    <Flex
+                        direction={{ base: "column", sm: "row" }}
+                        gap={{ base: 2, sm: 4 }}
+                        fontSize="xs"
+                        fontFamily="mono"
+                        color="gray.500"
+                    >
                         <HStack gap={1}>
                             <Lock size={12} />
                             <Text>client-side only</Text>
@@ -69,7 +75,7 @@ export function SecurityWarning() {
                             <Wifi size={12} style={{ transform: 'rotate(45deg)' }} />
                             <Text>no network requests</Text>
                         </HStack>
-                    </HStack>
+                    </Flex>
                 </Box>
             </Flex>
         </Box>
